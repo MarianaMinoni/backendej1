@@ -1,9 +1,12 @@
-// hacer una clase ticketmanager
+// hacer una clase productManager
+
+const fs = require('fs');
 
 class ProductManager {
-    constructor(){
+    constructor(path){
         this.productos = [];
         this.id = 0;
+        this.path = path;
 
     }
   
@@ -24,7 +27,7 @@ class ProductManager {
     }
 
 // metodo agregar producto con las validaciones
-    addproduct(title, description, price, thumbnail, code, stock){
+   async addproduct(title, description, price, thumbnail, code, stock){
 
         if (!title || !description || !price || !thumbnail || !code || !stock){
             console.log('todos los datos son obligatorios');
@@ -49,6 +52,11 @@ class ProductManager {
         }
         this.productos.push(producto);
         this.id ++;
+
+        await fs.promises.writeFile(this.path, JSON.stringify(this.productos))
+        .then(()=> console.log('Producto agregado y archivo actualizado correctamente'))
+        .catch((err)=>console.log(err))
+
        
         
 
@@ -69,13 +77,22 @@ class ProductManager {
 
     }
 
+upDateProduct(id, prop, cambio){
+    let producto = this.productos.find(producto => producto.id === id);
+    if(producto){
+        if(campo in producto){
+            producto[campo]= nuevoCampo;
+        }
+    }
 
+}
 
 }
 
 
 
-const productManager = new ProductManager();
+const productManager = new ProductManager('./productos.txt');
+
 
 
 productManager.addproduct('t-shirt', 'white t-shirt', '100', 'img1.jpeg','1100', '10');
